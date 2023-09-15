@@ -12,7 +12,7 @@ English (out of date) documentation for FA (1) https://www.podatki.gov.pl/media/
 
 - https://4programmers.net/Forum/Nietuzinkowe_tematy/355933-krajowy_system_e_faktur
 
-## KSeF Envirnoment
+## KSeF Environment
 
 - TEST: https://ksef-test.mf.gov.pl/
 - DEMO: https://ksef-demo.mf.gov.pl/
