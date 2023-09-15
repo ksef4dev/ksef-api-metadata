@@ -17,3 +17,9 @@ English (out of date) documentation for FA (1) https://www.podatki.gov.pl/media/
 - TEST: https://ksef-test.mf.gov.pl/
 - DEMO: https://ksef-demo.mf.gov.pl/
 - PROD: https://ksef.mf.gov.pl/
+
+## Web application
+
+- TEST: https://ksef-test.mf.gov.pl/web
+- DEMO: https://ksef-demo.mf.gov.pl/web
+- PROD: https://ksef.mf.gov.pl/web
