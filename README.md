@@ -1,0 +1,1 @@
+# ksef-api-metadata
