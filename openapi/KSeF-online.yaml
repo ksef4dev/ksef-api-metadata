@@ -6,7 +6,7 @@ info:
     url: https://ksef.mf.gov.pl
   description: Krajowy System e-Faktur
   title: KSeF
-  version: 2.0.4
+  version: 2.4.0
 externalDocs:
   description: Dokumentacja
   url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
@@ -461,15 +461,18 @@ paths:
       - Interfejsy interaktywne - faktury
   /online/Invoice/Status/{InvoiceElementReferenceNumber}:
     get:
-      description: |-
-        Sprawdzenie statusu wysłanej faktury
-        Obsługiwany nagłówek 'ksef-number-variant'
-        Obsługiwane wartości:
-        'v35'
-        'v36'
-        Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+      description: Sprawdzenie statusu wysłanej faktury
       operationId: online.invoice.invoice.status
       parameters:
+      - description: |-
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+        in: header
+        name: ksef-number-variant
+        schema:
+          type: string
       - in: path
         name: InvoiceElementReferenceNumber
         required: true
@@ -547,6 +550,74 @@ paths:
       summary: Sprawdzenie statusu wysłanej faktury
       tags:
       - Interfejsy interaktywne - faktury
+  /online/Invoice/Visibility/Hide:
+    post:
+      description: Ukrywanie wybranej faktury
+      operationId: online.invoice.invoice.hide
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideInvoiceRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisibilityInvoiceResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
+      security:
+      - SessionToken: []
+      summary: Ukrywanie wybranej faktury
+      tags:
+      - Interfejsy interaktywne - faktury
+  /online/Invoice/Visibility/Show:
+    post:
+      description: Anulowanie ukrycia wybranej faktury
+      operationId: online.invoice.invoice.show
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShowInvoiceRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisibilityInvoiceResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
+      security:
+      - SessionToken: []
+      summary: Anulowanie ukrycia wybranej faktury
+      tags:
+      - Interfejsy interaktywne - faktury
   /online/Payment/Identifier/GetReferenceNumbers/{PaymentIdentifier}:
     get:
       description: Pobranie listy faktur dla identyfikatora płatności
@@ -557,6 +628,22 @@ paths:
         required: true
         schema:
           type: string
+      - in: query
+        name: PageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 10
+      - in: query
+        name: PageOffset
+        required: true
+        schema:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 0
       responses:
         "200":
           content:
@@ -750,6 +837,16 @@ paths:
     post:
       description: Inicjalizacja zapytania o faktury
       operationId: online.query.query.invoice.init
+      parameters:
+      - description: |-
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+        in: header
+        name: ksef-number-variant
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -824,15 +921,18 @@ paths:
       - Interfejsy interaktywne - zapytania
   /online/Query/Invoice/Sync:
     post:
-      description: |- 
-        Zapytanie o faktury
-        Obsługiwany nagłówek 'ksef-number-variant'
-        Obsługiwane wartości:
-        'v35'
-        'v36'
-        Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+      description: Zapytanie o faktury
       operationId: online.query.query.invoice
       parameters:
+      - description: |-
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+        in: header
+        name: ksef-number-variant
+        schema:
+          type: string
       - in: query
         name: PageSize
         required: true
@@ -1189,15 +1289,18 @@ paths:
       - Interfejsy interaktywne - sesja
   /online/Session/Status:
     get:
-      description: |-
-        Sprawdzenie statusu obecnego przetwarzania interaktywnego
-        Obsługiwany nagłówek 'ksef-number-variant'
-                  Obsługiwane wartości:
-                  'v35'
-                  'v36'
-                  Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+      description: Sprawdzenie statusu obecnego przetwarzania interaktywnego
       operationId: online.session.session.status.plain
       parameters:
+      - description: |-
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+        in: header
+        name: ksef-number-variant
+        schema:
+          type: string
       - in: query
         name: PageSize
         schema:
@@ -1212,6 +1315,7 @@ paths:
           type: integer
           format: int32
           default: 0
+          maximum: 1000000
           minimum: 0
       - in: query
         name: IncludeDetails
@@ -1286,15 +1390,18 @@ paths:
       - Interfejsy interaktywne - sesja
   /online/Session/Status/{ReferenceNumber}:
     get:
-      description: |-
-        Sprawdzenie statusu przetwarzania na podstawie numeru referencyjnego
-        Obsługiwany nagłówek 'ksef-number-variant'
-        Obsługiwane wartości:
-        'v35'
-        'v36'
-        Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+      description: Sprawdzenie statusu przetwarzania na podstawie numeru referencyjnego
       operationId: online.session.session.status.reference.number
       parameters:
+      - description: |-
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
+        in: header
+        name: ksef-number-variant
+        schema:
+          type: string
       - in: path
         name: ReferenceNumber
         required: true
@@ -1315,6 +1422,7 @@ paths:
           type: integer
           format: int32
           default: 0
+          maximum: 1000000
           minimum: 0
       - in: query
         name: IncludeDetails
@@ -1467,6 +1575,7 @@ components:
           - fingerprint
           - nip
           - pesel
+          - peppol
       required:
       - identifier
       - type
@@ -1614,6 +1723,7 @@ components:
           fingerprint: '#/components/schemas/CredentialsIdentifierRequestIndividualCertificateFingerprintType'
           nip: '#/components/schemas/CredentialsIdentifierRequestIndividualNipType'
           onip: '#/components/schemas/CredentialsIdentifierRequestInstitutionalNipType'
+          peppolId: '#/components/schemas/CredentialsIdentifierRequestTypePeppolProviderType'
           pesel: '#/components/schemas/CredentialsIdentifierRequestIndividualPeselType'
         propertyName: type
       properties:
@@ -1623,6 +1733,17 @@ components:
           type: string
       required:
       - type
+    CredentialsIdentifierRequestTypePeppolProviderType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "^P[A-Z]{2}[0-9]{6}$"
+      required:
+      - identifier
     CredentialsIdentifierResponseAuthorisationTokenType:
       type: object
       allOf:
@@ -2170,13 +2291,30 @@ components:
     GetPaymentIdentifierReferenceNumbersResponse:
       type: object
       properties:
+        createdAt:
+          type: string
+          format: date-time
         ksefReferenceNumberList:
           type: array
           items:
-            type: string
-          maxItems: 100
+            $ref: '#/components/schemas/KsefReferenceNumberListResponseObject'
+          maxItems: 10000
           minItems: 1
           uniqueItems: true
+        numberOfElements:
+          type: integer
+          format: int64
+          minimum: 0
+        pageOffset:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 0
+        pageSize:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 10
         referenceNumber:
           type: string
           pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
@@ -2184,7 +2322,11 @@ components:
           type: string
           format: date-time
       required:
+      - createdAt
       - ksefReferenceNumberList
+      - numberOfElements
+      - pageOffset
+      - pageSize
       - referenceNumber
       - timestamp
     GrantContextCredentialsRequest:
@@ -2247,6 +2389,26 @@ components:
       - algorithm
       - encoding
       - value
+    HideInvoiceRequest:
+      type: object
+      properties:
+        invoiceHideRequest:
+          $ref: '#/components/schemas/HideInvoiceRequestType'
+      required:
+      - invoiceHideRequest
+    HideInvoiceRequestType:
+      type: object
+      properties:
+        hidingReason:
+          type: string
+          maxLength: 256
+          minLength: 1
+        ksefReferenceNumber:
+          type: string
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
+      required:
+      - hidingReason
+      - ksefReferenceNumber
     InitSessionResponse:
       type: object
       deprecated: true
@@ -2334,6 +2496,11 @@ components:
         gross:
           type: string
           pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
+        hidden:
+          type: boolean
+        hidingTime:
+          type: string
+          format: date-time
         invoiceHash:
           $ref: '#/components/schemas/FileUnlimitedHashType'
         invoiceReferenceNumber:
@@ -2350,6 +2517,9 @@ components:
           - UPR
           - KOR_ZAL
           - KOR_ROZ
+          - VAT_PEF
+          - VAT_PEF_SP
+          - KOR_PEF
         invoicingDate:
           type: string
           format: date
@@ -2393,6 +2563,7 @@ components:
       - currency
       - faP17Annotation
       - gross
+      - hidden
       - invoiceHash
       - invoiceReferenceNumber
       - invoiceType
@@ -2452,6 +2623,17 @@ components:
         ksefReferenceNumber:
           type: string
           pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{12})-([0-9A-F]{2})"
+    KsefReferenceNumberListResponseObject:
+      type: object
+      properties:
+        isSubject:
+          type: number
+        ksefReferenceNumber:
+          type: string
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{12})-([0-9A-F]{2})"
+      required:
+      - isSubject
+      - ksefReferenceNumber
     QueryCriteriaCredentialsAllType:
       type: object
       allOf:
@@ -2726,6 +2908,9 @@ components:
               - UPR
               - KOR_ZAL
               - KOR_ROZ
+              - VAT_PEF
+              - VAT_PEF_SP
+              - KOR_PEF
             uniqueItems: true
           invoicingDateFrom:
             type: string
@@ -2740,6 +2925,12 @@ components:
           ksefReferenceNumber:
             type: string
             pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
+          schemaType:
+            type: string
+            enum:
+            - VAT
+            - VAT_RR
+            - PEF
           subjectBy:
             $ref: '#/components/schemas/SubjectByType'
           subjectTo:
@@ -2797,6 +2988,16 @@ components:
           range: '#/components/schemas/QueryCriteriaInvoiceRangeType'
         propertyName: type
       properties:
+        hidingDateFrom:
+          type: string
+          format: date-time
+          description: yyyy-MM-dd'T'HH:mm:ss
+        hidingDateTo:
+          type: string
+          format: date-time
+          description: yyyy-MM-dd'T'HH:mm:ss
+        isHidden:
+          type: boolean
         subjectType:
           type: string
           enum:
@@ -2957,8 +3158,8 @@ components:
           type: array
           items:
             type: string
-          maxItems: 100
-          minItems: 1
+          maxItems: 10000
+          minItems: 2
           uniqueItems: true
       required:
       - ksefReferenceNumberList
@@ -2967,7 +3168,7 @@ components:
       properties:
         paymentIdentifier:
           type: string
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-([0-9A-Z]{2})(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
         referenceNumber:
           type: string
           pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
@@ -3177,6 +3378,26 @@ components:
       - processingDescription
       - referenceNumber
       - timestamp
+    ShowInvoiceRequest:
+      type: object
+      properties:
+        invoiceHideCancelationRequest:
+          $ref: '#/components/schemas/ShowInvoiceRequestType'
+      required:
+      - invoiceHideCancelationRequest
+    ShowInvoiceRequestType:
+      type: object
+      properties:
+        hidingCancelationReason:
+          type: string
+          maxLength: 256
+          minLength: 1
+        ksefReferenceNumber:
+          type: string
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
+      required:
+      - hidingCancelationReason
+      - ksefReferenceNumber
     StatusCredentialsResponse:
       type: object
       properties:
@@ -3876,6 +4097,9 @@ components:
               - UPR
               - KOR_ZAL
               - KOR_ROZ
+              - VAT_PEF
+              - VAT_PEF_SP
+              - KOR_PEF
             uniqueItems: true
           invoicingDateFrom:
             type: string
@@ -3890,6 +4114,12 @@ components:
           ksefReferenceNumber:
             type: string
             pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
+          schemaType:
+            type: string
+            enum:
+            - VAT
+            - VAT_RR
+            - PEF
           subjectBy:
             $ref: '#/components/schemas/V2_SubjectByQueryType'
           subjectTo:
@@ -3947,6 +4177,16 @@ components:
           range: '#/components/schemas/V2_QueryCriteriaInvoiceRangeType'
         propertyName: type
       properties:
+        hidingDateFrom:
+          type: string
+          format: date-time
+          description: yyyy-MM-dd'T'HH:mm:ss
+        hidingDateTo:
+          type: string
+          format: date-time
+          description: yyyy-MM-dd'T'HH:mm:ss
+        isHidden:
+          type: boolean
         subjectType:
           type: string
           enum:
@@ -4042,6 +4282,28 @@ components:
           $ref: '#/components/schemas/SubjectNameType'
       required:
       - issuedToIdentifier
+    VisibilityInvoiceResponse:
+      type: object
+      properties:
+        cancelationReason:
+          type: string
+        cancelationTimestamp:
+          type: string
+          format: date-time
+        canceled:
+          type: boolean
+        hidingReason:
+          type: string
+        hidingTimestamp:
+          type: string
+          format: date-time
+        ksefReferenceNumber:
+          type: string
+      required:
+      - cancelationTimestamp
+      - hidingReason
+      - hidingTimestamp
+      - ksefReferenceNumber
   securitySchemes:
     SessionToken:
       description: Token
